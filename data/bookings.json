@@ -1,18 +1,19 @@
 [
   {
-    "name": "Min Stack",
-    "place": "kank",
+    "name": "Mohit",
+    "place": "behror",
     "mobile": "9529901491",
     "entries": [
       {
-        "date": "2024-10-29",
-        "time": "19:33",
-        "program": "dfg"
+        "date": "2024-10-30",
+        "time": "13:29",
+        "program": "aa"
       }
     ],
     "advance": "0",
     "remaining": "100",
-    "djType": "407",
-    "systemOperator": "Mohit"
+    "djType": "pickup",
+    "systemOperator": "py",
+    "id": "e5984be8-a101-481c-907d-d90c583504fb"
   }
 ]
