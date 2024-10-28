@@ -113,8 +113,8 @@ function renderBookings(bookings) {
  
     bookingDetails += `
       </ul>
-      <button class="edit-btn" data-id="${index}">Edit</button>
-      <button class="delete-btn" data-id="${index}">Delete</button>
+      <button class="edit-btn" data-id="${booking.id}">Edit</button>
+      <button class="delete-btn" data-id="${booking.id}">Delete</button>
     `;
  
     bookingItem.innerHTML = bookingDetails;

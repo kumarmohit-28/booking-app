@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     let bookingsFound = false;
 
-    bookings.forEach((booking, bookingIndex) => {
+    bookings.forEach((booking) => {
       if (Array.isArray(booking.entries)) {
         booking.entries.forEach(entry => {
           if (entry.date === date) { // Compare with IST-formatted date
@@ -155,12 +155,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                 <br><strong>Place:</strong> ${place}
                 <br><strong>DJ Type:</strong> ${djType}
                 <br><strong>System Operator:</strong>${systemOprator}
-                <br><a href="view-booking.html?id=${bookingIndex}" target="_blank">View Details</a>
+                <br><a href="view-booking.html?id=${booking.id}" target="_blank">View Details</a>
               </div>
               ${isLoggedIn ? `
                 <div class="booking-actions">
-                  <button class="edit-btn" data-id="${bookingIndex}">Edit</button>
-                  <button class="delete-btn" data-id="${bookingIndex}">Delete</button>
+                  <button class="edit-btn" data-id="${booking.id}">Edit</button>
+                  <button class="delete-btn" data-id="${booking.id}">Delete</button>
                 </div>
               ` : ''}
               `;

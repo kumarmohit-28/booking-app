@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const bookingId = params.get("id");
 
   const bookings = await getAllBookings();
-  const booking = bookings[bookingId];
+  const booking = bookings.find(b => b.id === bookingId);
 
   if (!booking) {
     bookingDetailsContainer.innerHTML = "<p>Booking not found.</p>";

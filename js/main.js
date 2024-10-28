@@ -51,10 +51,12 @@ async function saveBooking() {
   try {
     const result = await saveBookingToServer(booking);
     alert("Booking saved successfully!");
+    const bookingId = result.id; // Assuming the server returns the new booking's ID
+
 
     // Retrieve updated bookings to get the new booking ID
-    const bookings = await getAllBookings();
-    const bookingId = bookings.length - 1;
+    // const bookings = await getAllBookings();
+    // const bookingId = bookings.length - 1;
 
     // Generate a link to send to the client
     const bookingLink = `${window.location.origin}/view-booking.html?id=${bookingId}`;

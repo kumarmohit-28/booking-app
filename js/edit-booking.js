@@ -13,7 +13,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   const bookings = await getAllBookings();
-  const booking = bookings[currentBookingId];
+  const booking = bookings.find(b => b.id === currentBookingId);
+  // const booking = bookings[currentBookingId];
 
   if (!booking) {
     alert("Booking not found");
