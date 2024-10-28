@@ -1,7 +1,8 @@
 // js/storage.js
 
 // URL of the API endpoint
-const API_URL = 'http://localhost:3000/api/bookings';
+// const API_URL = 'http://localhost:3000/api/bookings';
+const API_URL = '/api/bookings';
 
 // Function to get all bookings from the server
 async function getAllBookings() {
