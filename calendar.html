@@ -1,0 +1,49 @@
+<!-- calendar.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Calendar & Bookings</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Include any additional CSS for calendar styling -->
+</head>
+<body>
+  <div class="container">
+    <h1>Calendar & Bookings</h1>
+    <div class="calendar-header">
+      <button id="prev-month">&lt; Previous</button>
+      <span id="month-year"></span>
+      <button id="next-month">Next &gt;</button>
+    </div>
+    <div id="calendar">
+      <!-- Calendar dates will be populated here -->
+    </div>
+    <div id="booking-preview">
+      <br>
+      <h2>Bookings on Selected Date</h2>
+      <ul id="booking-list"></ul>
+    </div>
+    <button id="back-to-home" style="display: none;" onclick="location.href='index.html'">Back to Home</button>
+  </div>
+  <!-- Delete Confirmation Modal -->
+  <div id="delete-modal" class="modal">
+    <div class="modal-content">
+      <h2>Confirm Deletion</h2>
+      <p>Are you sure you want to delete this booking?</p>
+      <button id="confirm-delete">Yes, Delete</button>
+      <button id="cancel-delete">Cancel</button>
+    </div>
+  </div>
+  <!-- Include storage.js before calendar.js -->
+  <script src="js/storage.js"></script>
+  <script>
+    // Check if user is logged in and show the "Back to Home" button
+    document.addEventListener('DOMContentLoaded', function() {
+      const isLoggedIn = localStorage.getItem("userPin") !== null;
+      document.getElementById('back-to-home').style.display = isLoggedIn ? 'block' : 'none';
+    });
+  </script>
+  <script src="js/calendar.js"></script>
+</body>
+</html>

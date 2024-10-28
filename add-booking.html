@@ -1,0 +1,58 @@
+<!-- add-booking.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Booking</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/auth.js"></script>
+  <script>
+    checkLogin();
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Add New Booking</h1>
+    <form id="booking-form">
+      <label>Name:
+        <input type="text" id="name">
+      </label>
+      <label>Place:
+        <input type="text" id="place">
+      </label>
+      <label>Mobile Number:
+        <input type="tel" id="mobile">
+      </label>
+
+      <label>DJ Type:
+        <select id="dj-type">
+          <option value="407">407</option>
+          <option value="pickup">Pickup</option>
+        </select>
+      </label>
+
+      <div id="entries-container">
+        <!-- Entry sections will be added here -->
+      </div>
+
+      <button type="button" id="add-entry-button">Add Date & Program</button>
+
+      <label>Advance Amount Paid:
+        <input type="number" id="advance">
+      </label>
+      <label>Remaining Amount:
+        <input type="number" id="remaining">
+      </label>
+
+      <button type="button" onclick="saveBooking()">Save Booking</button>
+    </form>
+    <button onclick="location.href='index.html'">Back to Home</button>
+  </div>
+
+  <!-- Include storage.js before main.js -->
+  <script src="js/storage.js"></script>
+  <script src="js/main.js"></script>
+  
+</body>
+</html>

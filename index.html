@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking App</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/auth.js"></script>
+  <script>
+    checkLogin(); // Check login status before loading the page
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to the Booking App</h1>
+    <div class="button-container">
+      <button onclick="location.href='calendar.html'">View Calendar & Bookings</button>
+      <button onclick="location.href='add-booking.html'">Add a New Booking</button>
+      <button onclick="location.href='all-bookings.html'">View All Bookings</button>
+    </div>
+    <button onclick="logout()">Logout</button>
+  </div>
+</body>
+</html>

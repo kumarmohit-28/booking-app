@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Booking</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/auth.js"></script>
+  <script>
+    checkLogin();
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Edit Booking</h1>
+    <form id="booking-form">
+      <label>Name:
+        <input type="text" id="name">
+      </label>
+      <label>Place:
+        <input type="text" id="place">
+      </label>
+      <label>Mobile Number:
+        <input type="tel" id="mobile">
+      </label>
+      <label>DJ Type:
+        <select id="dj-type">
+          <option value="407">407</option>
+          <option value="pickup">Pickup</option>
+        </select>
+      </label>
+
+      <div id="entries-container">
+        <!-- Entries will be added here by JavaScript -->
+      </div>
+
+      <button type="button" id="add-entry-button">Add Date & Program</button>
+
+      <label>Advance Amount Paid:
+        <input type="number" id="advance">
+      </label>
+      <label>Remaining Amount:
+        <input type="number" id="remaining">
+      </label>
+
+      <button type="button" onclick="updateBooking()">Update Booking</button>
+    </form>
+    <button onclick="location.href='index.html'">Back to Home Page</button>
+  </div>
+
+  <!-- Include storage.js before edit-booking.js -->
+  <script src="js/storage.js"></script>
+  <script src="js/edit-booking.js"></script>
+</body>
+</html>
