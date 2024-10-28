@@ -1,32 +1,18 @@
 [
   {
-    "name": "Mohit",
-    "place": "kankar chhaja",
+    "name": "Min Stack",
+    "place": "kank",
     "mobile": "9529901491",
     "entries": [
       {
-        "date": "2024-10-27",
-        "time": "23:34",
-        "program": "f"
+        "date": "2024-10-29",
+        "time": "19:33",
+        "program": "dfg"
       }
     ],
     "advance": "0",
     "remaining": "100",
-    "djType": "407"
-  },
-  {
-    "name": "asdfgh",
-    "place": "kankar chhaja",
-    "mobile": "9529901491",
-    "entries": [
-      {
-        "date": "2024-10-28",
-        "time": "09:32",
-        "program": "lagan"
-      }
-    ],
-    "advance": "0",
-    "remaining": "0",
-    "djType": "407"
+    "djType": "407",
+    "systemOperator": "Mohit"
   }
 ]
