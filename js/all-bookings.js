@@ -186,7 +186,7 @@ async function clearFilters() {
   filterStartDate.value = "";
   filterEndDate.value = "";
   // Reset any visual indicators of validation errors
-  resetValidationErrors();
+  // resetValidationErrors();
  
   try {
     const bookings = await getAllBookings();
@@ -203,12 +203,12 @@ function showDeleteModal(bookingId) {
   const deleteModal = document.getElementById("delete-modal");
   deleteModal.style.display = "block";
 }
-function resetValidationErrors() {
-  // Remove any error classes or messages
-  const inputs = [filterOperatorSelect, filterStartDate, filterEndDate];
-  inputs.forEach(input => input.classList.remove('error'));
-  document.getElementById('filter-error-message').textContent = '';
-}
+// function resetValidationErrors() {
+//   // Remove any error classes or messages
+//   const inputs = [filterOperatorSelect, filterStartDate, filterEndDate];
+//   inputs.forEach(input => input.classList.remove('error'));
+//   document.getElementById('filter-error-message').textContent = '';
+// }
  
 async function confirmDelete() {
   if (bookingToDelete !== null) {

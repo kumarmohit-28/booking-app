@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   const bookings = await getAllBookings();
   const booking = bookings[currentBookingId];
-  console.log(booking)
 
   if (!booking) {
     alert("Booking not found");
@@ -34,7 +33,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Populate entries
   const entriesContainer = document.getElementById('entries-container');
   if (Array.isArray(booking.entries)) {
-    console.log(booking.entries)
     booking.entries.forEach(entry => addEntry(entry));
   } else {
     addEntry();
