@@ -28,6 +28,13 @@
           <option value="pickup">Pickup</option>
         </select>
       </label>
+      <label>System Operator:
+        <select id="system-operator">
+          <option value="none">None</option>
+          <!-- Options will be populated dynamically -->
+        </select>
+      </label>
+      <input type="text" id="new-operator" placeholder="Enter new operator name" style="display: none;">
 
       <div id="entries-container">
         <!-- Entries will be added here by JavaScript -->
@@ -50,5 +57,7 @@
   <!-- Include storage.js before edit-booking.js -->
   <script src="js/storage.js"></script>
   <script src="js/edit-booking.js"></script>
+  <!-- <script src="js/main.js"></script> -->
+
 </body>
 </html>

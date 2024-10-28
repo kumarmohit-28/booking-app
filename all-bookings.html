@@ -12,6 +12,25 @@
 <body>
   <div class="container">
     <h1>All Bookings</h1>
+    <div id="filter-section">
+      <h2>Filter Bookings</h2>
+      <label>System Operator:
+        <select id="filter-operator">
+          <option value="">All Operators</option>
+          <!-- Options will be populated dynamically -->
+        </select>
+      </label>
+      <label>Start Date:
+        <input type="date" id="filter-start-date">
+      </label>
+      <label>End Date:
+        <input type="date" id="filter-end-date">
+      </label>
+      <div id="filter-error-message" class="error-message"></div>
+      <button id="apply-filter">Apply Filter</button>
+      <button id="clear-filter">Clear Filters</button>
+
+    </div>
     <div id="bookings-list">
       <!-- Bookings will be displayed here -->
     </div>
@@ -25,7 +44,6 @@
       <button id="cancel-delete">Cancel</button>
     </div>
   </div>
-  <!-- Delete Confirmation Modal -->
 <!-- Delete Confirmation Modal -->
   <div id="delete-modal" class="modal">
     <div class="modal-content">

@@ -7,13 +7,16 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
+
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
 
 // Path to bookings.json
 const BOOKINGS_FILE = path.join(__dirname, 'data', 'bookings.json');
+const OPERATORS_FILE = path.join(__dirname, 'data', 'operators.json');
+
 
 // Ensure data directory exists
 const DATA_DIR = path.join(__dirname, 'data');
@@ -35,6 +38,24 @@ async function readBookings() {
 // Helper function to write bookings
 async function writeBookings(bookings) {
   await fs.writeFile(BOOKINGS_FILE, JSON.stringify(bookings, null, 2));
+}
+
+// Helper function to read operators
+async function readOperators() {
+  try {
+    const data = await fs.readFile(OPERATORS_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      return []; // Default operators
+    }
+    throw err;
+  }
+}
+ 
+// Helper function to write operators
+async function writeOperators(operators) {
+  await fs.writeFile(OPERATORS_FILE, JSON.stringify(operators, null, 2));
 }
 
 // API endpoint to get all bookings
@@ -101,12 +122,62 @@ app.delete('/api/bookings/:id', async (req, res) => {
   }
 });
 
+// API endpoint to get filtered bookings
+app.get('/api/bookings/filter', async (req, res) => {
+  try {
+    const { operator, startDate, endDate } = req.query;
+    let bookings = await readBookings();
+ 
+    if (operator) {
+      bookings = bookings.filter(booking => booking.systemOperator === operator);
+    }
+ 
+    if (startDate && endDate) {
+      bookings = bookings.filter(booking => {
+        return booking.entries.some(entry => {
+          return entry.date >= startDate && entry.date <= endDate;
+        });
+      });
+    }
+ 
+    res.json(bookings);
+  } catch (err) {
+    console.error('Error filtering bookings:', err);
+    res.status(500).json({ error: 'Error filtering bookings' });
+  }
+});
+ 
+// API endpoint to get all operators
+app.get('/api/bookings/operators', async (req, res) => {
+  try {
+    const operators = await readOperators();
+    res.json(operators);
+  } catch (err) {
+    console.error('Error reading operators:', err);
+    res.status(500).json({ error: 'Error reading operators' });
+  }
+});
+ 
+// API endpoint to add a new operator
+app.post('/api/bookings/operators', async (req, res) => {
+  try {
+    const newOperator = req.body.operator;
+    const operators = await readOperators();
+    if (!operators.includes(newOperator)) {
+      operators.push(newOperator);
+      await writeOperators(operators);
+    }
+    res.status(201).json({ message: 'Operator added successfully' });
+  } catch (err) {
+    console.error('Error adding operator:', err);
+    res.status(500).json({ error: 'Error adding operator' });
+  }
+});
+
 // Serve static files (your HTML, CSS, JS files)
 app.use(express.static(__dirname));
 
 // Start the server
-// app.listen(port, () => {
-//   console.log(`Server running at http://localhost:${port}`);
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Server running at http://0.0.0.0:${port}`);
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
 });
