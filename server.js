@@ -7,7 +7,7 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.json());
@@ -178,6 +178,10 @@ app.post('/api/bookings/operators', async (req, res) => {
 app.use(express.static(__dirname));
 
 // Start the server
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+// app.listen(port, () => {
+//   console.log(`Server running at http://localhost:${port}`);
+// });
+const server = app.listen(port, '0.0.0.0', () => {
+  const host = server.address().address;
+  console.log(`Server running at http://${host}:${port}`);
 });
