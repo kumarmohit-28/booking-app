@@ -1,8 +1,14 @@
 // js/storage.js
 
 // URL of the API endpoint
-const API_URL = 'http://localhost:3000/api/bookings';
-
+const API_URL = (() => {
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:3000/api/bookings';
+  } else {
+    // For production, use the current origin
+    return `${window.location.origin}/api/bookings`;
+  }
+})();
 // Function to get all bookings from the server
 async function getAllBookings() {
   try {
