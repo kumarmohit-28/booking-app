@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   const bookings = await getAllBookings();
   const booking = bookings[currentBookingId];
+  console.log(booking)
 
   if (!booking) {
     alert("Booking not found");
@@ -29,9 +30,11 @@ document.addEventListener("DOMContentLoaded", async function () {
   document.getElementById("advance").value = booking.advance || '';
   document.getElementById("remaining").value = booking.remaining || '';
 
+
   // Populate entries
   const entriesContainer = document.getElementById('entries-container');
   if (Array.isArray(booking.entries)) {
+    console.log(booking.entries)
     booking.entries.forEach(entry => addEntry(entry));
   } else {
     addEntry();
@@ -39,6 +42,45 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Add event listener for the "Add Date & Program" button
   document.getElementById('add-entry-button').addEventListener('click', () => addEntry());
+
+
+  // Populate system operator dropdown
+
+  const systemOperatorSelect = document.getElementById('system-operator');
+  const operators = await getOperators();
+  operators.forEach(operator => {
+
+    const option = document.createElement('option');
+
+    option.value = operator;
+
+    option.textContent = operator;
+
+    systemOperatorSelect.appendChild(option);
+  });
+  // Add "New Operator" option
+  const newOperatorOption = document.createElement('option');
+  newOperatorOption.value = 'new';
+  newOperatorOption.textContent = 'New Operator';
+  systemOperatorSelect.appendChild(newOperatorOption);
+  // Show/hide new operator input field
+
+  systemOperatorSelect.addEventListener('change', function() {
+
+    const newOperatorInput = document.getElementById('new-operator');
+
+    if (this.value === 'new') {
+
+      newOperatorInput.style.display = 'block';
+
+    } else {
+
+      newOperatorInput.style.display = 'none';
+
+    }
+  });
+    document.getElementById("system-operator").value = booking.systemOperator || 'none';
+
 });
 
 function addEntry(entry = null) {
@@ -90,6 +132,40 @@ function updateRemoveButtons() {
   });
 }
 
+async function getOperators() {
+
+  const response = await fetch(`${API_URL}/operators`);
+
+  return response.json();
+
+}
+
+async function addNewOperator(newOperator) {
+
+  try {
+
+    const response = await fetch(`${API_URL}/operators`, {
+
+      method: 'POST',
+
+      headers: { 'Content-Type': 'application/json' },
+
+      body: JSON.stringify({ operator: newOperator })
+
+    });
+
+    if (!response.ok) throw new Error('Failed to add new operator');
+
+  } catch (error) {
+
+    console.error('Error adding new operator:', error);
+
+    throw error;
+
+  }
+
+}
+
 async function updateBooking() {
   const name = document.getElementById("name").value || '';
   const place = document.getElementById("place").value || '';
@@ -109,6 +185,19 @@ async function updateBooking() {
   const advance = document.getElementById("advance").value || '';
   const remaining = document.getElementById("remaining").value || '';
   const djType = document.getElementById("dj-type").value;
+  const systemOperatorSelect = document.getElementById("system-operator");
+  let systemOperator = systemOperatorSelect.value;
+ 
+  if (systemOperator === 'new') {
+    const newOperator = document.getElementById("new-operator").value.trim();
+    if (newOperator) {
+      await addNewOperator(newOperator);
+      systemOperator = newOperator;
+    } else if (systemOperator === 'new') {
+      alert("Please enter a name for the new operator.");
+      return;
+    }
+  }
 
   const updatedBooking = {
     name,
@@ -117,7 +206,8 @@ async function updateBooking() {
     entries,
     advance,
     remaining,
-    djType
+    djType,
+    systemOperator
   };
 
   try {

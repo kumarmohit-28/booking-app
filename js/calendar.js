@@ -1,5 +1,7 @@
 // js/calendar.js
 
+let bookingToDelete = null;
+
 document.addEventListener("DOMContentLoaded", async function () {
   const bookingList = document.getElementById("booking-list");
   const calendarEl = document.getElementById("calendar");
@@ -12,7 +14,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   let currentYear = new Date().getFullYear();
    // Check if user is logged in
   const isLoggedIn = localStorage.getItem("userPin") !== null;
-  let bookingToDelete = null;
  
 
 
@@ -113,6 +114,21 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
+  // Use event delegation for dynamic elements
+  bookingList.addEventListener('click', function(event) {
+    if (event.target.classList.contains('delete-btn')) {
+      bookingToDelete = event.target.getAttribute('data-id');
+      deleteModal.style.display = "block";
+    } else if (event.target.classList.contains('edit-btn')) {
+      const bookingId = event.target.getAttribute('data-id');
+      window.location.href = `edit-booking.html?id=${bookingId}`;
+    }
+  });
+ 
+  confirmDeleteBtn.addEventListener('click', confirmDelete);
+  cancelDeleteBtn.addEventListener('click', cancelDelete);
+ 
+
   async function displayBookings(date) {
     bookingList.innerHTML = "";
     const bookings = await getAllBookings();
@@ -129,6 +145,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             const time = entry.time || 'Unknown';
             const program = entry.program || 'No program details';
             const djType = booking.djType || 'Unknown';
+            const systemOprator = booking.systemOperator || 'Unknown';
 
             const li = document.createElement("li");
             li.classList.add("booking-itema");
@@ -137,6 +154,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 <strong>${name}</strong> - ${time} - ${program}
                 <br><strong>Place:</strong> ${place}
                 <br><strong>DJ Type:</strong> ${djType}
+                <br><strong>System Operator:</strong>${systemOprator}
                 <br><a href="view-booking.html?id=${bookingIndex}" target="_blank">View Details</a>
               </div>
               ${isLoggedIn ? `
@@ -148,36 +166,36 @@ document.addEventListener("DOMContentLoaded", async function () {
               `;
 
             bookingList.appendChild(li);
-            if (isLoggedIn) {
-              // addEditDeleteListeners(li, bookingIndex);
-              document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                  const bookingId = this.getAttribute('data-id');
-                  window.location.href = `edit-booking.html?id=${bookingId}`;
-                });
-              });
+            // if (isLoggedIn) {
+              // // addEditDeleteListeners(li, bookingIndex);
+              // document.querySelectorAll('.edit-btn').forEach(btn => {
+              //   btn.addEventListener('click', function() {
+              //     const bookingId = this.getAttribute('data-id');
+              //     window.location.href = `edit-booking.html?id=${bookingId}`;
+              //   });
+              // });
 
-              document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                  bookingToDelete = this.getAttribute('data-id');
-                  deleteModal.style.display = "block";
-                });
-              });
+              // document.querySelectorAll('.delete-btn').forEach(btn => {
+              //   btn.addEventListener('click', function() {
+              //     bookingToDelete = this.getAttribute('data-id');
+              //     deleteModal.style.display = "block";
+              //   });
+              // });
 
-              confirmDeleteBtn.addEventListener('click', async function() {
-              if (bookingToDelete !== null) {
-                await confirmDelete();
-                deleteModal.style.display = "none";
-                location.reload();
-              }
-            });
+            //   confirmDeleteBtn.addEventListener('click', async function() {
+            //   if (bookingToDelete !== null) {
+            //     await confirmDelete();
+            //     deleteModal.style.display = "none";
+            //     location.reload();
+            //   }
+            // });
 
-            cancelDeleteBtn.addEventListener('click', function() {
-              deleteModal.style.display = "none";
-              bookingToDelete = null;
-            });
+            // cancelDeleteBtn.addEventListener('click', function() {
+            //   deleteModal.style.display = "none";
+            //   bookingToDelete = null;
+            // });
 
-            }
+            // }
           }
         });
       }
@@ -206,4 +224,5 @@ document.addEventListener("DOMContentLoaded", async function () {
     deleteModal.style.display = "none";
     bookingToDelete = null;
   }
-});
+    });
+

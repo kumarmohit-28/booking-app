@@ -23,6 +23,19 @@ async function saveBooking() {
   const advance = document.getElementById("advance").value || '';
   const remaining = document.getElementById("remaining").value || '';
   const djType = document.getElementById("dj-type").value;
+  const systemOperatorSelect = document.getElementById("system-operator");
+  let systemOperator = systemOperatorSelect.value;
+ 
+  if (systemOperator === 'new') {
+    const newOperator = document.getElementById("new-operator").value.trim();
+    if (newOperator) {
+      await addNewOperator(newOperator);
+      systemOperator = newOperator;
+    } else {
+      alert("Please enter a name for the new operator.");
+      return;
+    }
+  }
 
   const booking = {
     name,
@@ -31,7 +44,8 @@ async function saveBooking() {
     entries,
     advance,
     remaining,
-    djType
+    djType,
+    systemOperator
   };
 
   try {
@@ -50,6 +64,19 @@ async function saveBooking() {
   } catch (error) {
     console.error(error);
     alert("Error saving booking. Please try again.");
+  }
+}
+async function addNewOperator(newOperator) {
+  try {
+    const response = await fetch(`${API_URL}/operators`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ operator: newOperator })
+    });
+    if (!response.ok) throw new Error('Failed to add new operator');
+  } catch (error) {
+    console.error('Error adding new operator:', error);
+    throw error;
   }
 }
 
@@ -106,9 +133,40 @@ function updateRemoveButtons() {
 }
 
 // Add event listener for the "Add Date & Program" button
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   // Add the first entry by default
   addEntry();
-
+ 
   document.getElementById('add-entry-button').addEventListener('click', addEntry);
+ 
+  // Populate system operator dropdown
+  const systemOperatorSelect = document.getElementById('system-operator');
+  const operators = await getOperators();
+  operators.forEach(operator => {
+    const option = document.createElement('option');
+    option.value = operator;
+    option.textContent = operator;
+    systemOperatorSelect.appendChild(option);
+  });
+ 
+  // Add "New Operator" option
+  const newOperatorOption = document.createElement('option');
+  newOperatorOption.value = 'new';
+  newOperatorOption.textContent = 'New Operator';
+  systemOperatorSelect.appendChild(newOperatorOption);
+ 
+  // Show/hide new operator input field
+  systemOperatorSelect.addEventListener('change', function() {
+    const newOperatorInput = document.getElementById('new-operator');
+    if (this.value === 'new') {
+      newOperatorInput.style.display = 'block';
+    } else {
+      newOperatorInput.style.display = 'none';
+    }
+  });
 });
+ 
+async function getOperators() {
+  const response = await fetch(`${API_URL}/operators`);
+  return response.json();
+}

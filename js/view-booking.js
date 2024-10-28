@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const advance = booking.advance || 'Not provided';
   const remaining = booking.remaining || 'Not provided';
   const djType = booking.djType || 'Not provided';
+  const systemOperator = booking.systemOperator || 'None';
 
 
   let bookingDetails = `
@@ -32,6 +33,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     <p><strong>Advance Paid:</strong> ${advance}</p>
     <p><strong>Remaining Amount:</strong> ${remaining}</p>
     <p><strong>DJ Type:</strong> ${djType}</p>
+    <p><strong>System Operator:</strong> ${systemOperator}</p>
     <h3>Programs:</h3>
     <ul class="program-list">
   `;
