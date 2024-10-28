@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 const path = require('path');
 const cors = require('cors');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -73,10 +74,12 @@ app.get('/api/bookings', async (req, res) => {
 app.post('/api/bookings', async (req, res) => {
   try {
     const newBooking = req.body;
+    newBooking.id = uuidv4();
+
     const bookings = await readBookings();
     bookings.push(newBooking);
     await writeBookings(bookings);
-    res.status(201).json({ message: 'Booking saved successfully' });
+    res.status(201).json({ message: 'Booking saved successfully', id: newBooking.id });
   } catch (err) {
     console.error('Error saving booking:', err);
     res.status(500).json({ error: 'Error saving booking' });
@@ -86,15 +89,16 @@ app.post('/api/bookings', async (req, res) => {
 // API endpoint to update a booking
 app.put('/api/bookings/:id', async (req, res) => {
   try {
-    const bookingId = parseInt(req.params.id);
+    const bookingId = req.params.id;
     const updatedBooking = req.body;
     const bookings = await readBookings();
 
-    if (bookingId < 0 || bookingId >= bookings.length) {
+    const index = bookings.findIndex(booking => booking.id === bookingId);
+    if (index === -1) {
       return res.status(404).json({ error: 'Booking not found' });
     }
 
-    bookings[bookingId] = updatedBooking;
+    bookings[index] = { ...updatedBooking, id: bookingId };
     await writeBookings(bookings);
     res.json({ message: 'Booking updated successfully' });
   } catch (err) {
@@ -106,14 +110,15 @@ app.put('/api/bookings/:id', async (req, res) => {
 // API endpoint to delete a booking
 app.delete('/api/bookings/:id', async (req, res) => {
   try {
-    const bookingId = parseInt(req.params.id);
+    const bookingId = req.params.id;
     const bookings = await readBookings();
 
-    if (bookingId < 0 || bookingId >= bookings.length) {
+    const index = bookings.findIndex(booking => booking.id === bookingId);
+    if (index === -1) {
       return res.status(404).json({ error: 'Booking not found' });
     }
 
-    bookings.splice(bookingId, 1);
+    bookings.splice(index, 1);
     await writeBookings(bookings);
     res.json({ message: 'Booking deleted successfully' });
   } catch (err) {
