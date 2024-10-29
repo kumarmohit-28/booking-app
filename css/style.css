@@ -393,3 +393,18 @@ a:hover {
   width: 70px;
 }
 
+.footer-content {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+}
+ 
+.footer-logo img {
+  max-width: 180px;
+  height: auto;
+}
+ 
+.footer-contact p {
+  margin: 5px 0;
+}
