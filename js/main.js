@@ -60,19 +60,19 @@ async function saveBooking() {
     const smsMessage = `Hi ${name}, your booking has been confirmed. Please find the details here: ${bookingLink}`;
 
     // Check if the device is mobile
-    if (/Mobi|Android/i.test(navigator.userAgent)) {
+    // if (/Mobi|Android/i.test(navigator.userAgent)) {
       // Construct the SMS URL
       const smsUrl = `sms:${mobile}?body=${encodeURIComponent(smsMessage)}`;
       // Redirect to the SMS app
       window.location.href = smsUrl;
-    } else {
-      // For non-mobile devices, prompt the user with the booking link
-      prompt("Copy this link to send to the client:", bookingLink);
-      // Optionally, display the SMS message
-      alert(`SMS Message:\n${smsMessage}`);
-    }
+    // } else {
+    //   // For non-mobile devices, prompt the user with the booking link
+    //   prompt("Copy this link to send to the client:", bookingLink);
+    //   // Optionally, display the SMS message
+    //   alert(`SMS Message:\n${smsMessage}`);
+    // }
     
-    prompt("Copy this link to send to the client:", bookingLink);
+    // prompt("Copy this link to send to the client:", bookingLink);
 
     window.location.href = "calendar.html";
   } catch (error) {
