@@ -53,24 +53,22 @@ async function saveBooking() {
     alert("Booking saved successfully!");
     const bookingId = result.id; // Assuming the server returns the new booking's ID
 
-    // Generate a link to send to the client
+    // Generate booking details message
     const bookingLink = `${window.location.origin}/view-booking.html?id=${bookingId}`;
+    const messageText = `Hi, your booking has been confirmed! Please find details below:\n\n` +
+      `Name: ${name}\n` +
+      `Place: ${place}\n` +
+      `Date: ${entries[0].date}\n` + // Using first entry's date
+      `Time: ${entries[0].time}\n` + // Using first entry's time
+      `View full details: ${bookingLink}`;
 
-    // Construct the SMS message
-    const smsMessage = `Hi ${name}, your booking has been confirmed. Please find the details here: ${bookingLink}`;
+    // Create SMS link
+    const smsLink = `sms:${mobile}?body=${encodeURIComponent(messageText)}`;
 
-    // Check if the device is mobile
-    // if (/Mobi|Android/i.test(navigator.userAgent)) {
-      // Construct the SMS URL
-      const smsUrl = `sms:${mobile}?body=${encodeURIComponent(smsMessage)}`;
-      // Redirect to the SMS app
-      window.location.href = smsUrl;
-    // } else {
-    //   // For non-mobile devices, prompt the user with the booking link
-    //   prompt("Copy this link to send to the client:", bookingLink);
-    //   // Optionally, display the SMS message
-    //   alert(`SMS Message:\n${smsMessage}`);
-    // }
+    // Prompt user to send SMS
+    if (confirm("Would you like to send a confirmation SMS to the client?")) {
+      window.location.href = smsLink;
+    }
     
     // prompt("Copy this link to send to the client:", bookingLink);
 
