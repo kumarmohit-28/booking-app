@@ -1,68 +1,42 @@
-// server.js
-
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs').promises;
-const path = require('path');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
+const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// MongoDB connection string - replace with your actual connection string
+const uri = "mongodb+srv://kumarmohit:Import__cv2@cluster0.mcp2c.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const client = new MongoClient(uri);
 
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
 
-// Path to bookings.json
-const BOOKINGS_FILE = path.join(__dirname, 'data', 'bookings.json');
-const OPERATORS_FILE = path.join(__dirname, 'data', 'operators.json');
-
-
-// Ensure data directory exists
-const DATA_DIR = path.join(__dirname, 'data');
-fs.mkdir(DATA_DIR, { recursive: true }).catch(console.error);
-
-// Helper function to read bookings
-async function readBookings() {
+// Connect to MongoDB
+async function connectToDatabase() {
   try {
-    const data = await fs.readFile(BOOKINGS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (err) {
-    if (err.code === 'ENOENT') {
-      return [];
-    }
-    throw err;
+    await client.connect();
+    console.log("Connected successfully to MongoDB");
+  } catch (e) {
+    console.error("Could not connect to MongoDB", e);
+    process.exit(1);
   }
 }
 
-// Helper function to write bookings
-async function writeBookings(bookings) {
-  await fs.writeFile(BOOKINGS_FILE, JSON.stringify(bookings, null, 2));
-}
+connectToDatabase();
 
-// Helper function to read operators
-async function readOperators() {
-  try {
-    const data = await fs.readFile(OPERATORS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (err) {
-    if (err.code === 'ENOENT') {
-      return []; // Default operators
-    }
-    throw err;
-  }
-}
- 
-// Helper function to write operators
-async function writeOperators(operators) {
-  await fs.writeFile(OPERATORS_FILE, JSON.stringify(operators, null, 2));
-}
+// Get database and collections
+const db = client.db();
+const bookingsCollection = db.collection('bookings');
+const operatorsCollection = db.collection('operators');
 
 // API endpoint to get all bookings
 app.get('/api/bookings', async (req, res) => {
   try {
-    const bookings = await readBookings();
+    const bookings = await bookingsCollection.find({}).toArray();
     res.json(bookings);
   } catch (err) {
     console.error('Error reading bookings:', err);
@@ -75,10 +49,7 @@ app.post('/api/bookings', async (req, res) => {
   try {
     const newBooking = req.body;
     newBooking.id = uuidv4();
-
-    const bookings = await readBookings();
-    bookings.push(newBooking);
-    await writeBookings(bookings);
+    const result = await bookingsCollection.insertOne(newBooking);
     res.status(201).json({ message: 'Booking saved successfully', id: newBooking.id });
   } catch (err) {
     console.error('Error saving booking:', err);
@@ -91,15 +62,13 @@ app.put('/api/bookings/:id', async (req, res) => {
   try {
     const bookingId = req.params.id;
     const updatedBooking = req.body;
-    const bookings = await readBookings();
-
-    const index = bookings.findIndex(booking => booking.id === bookingId);
-    if (index === -1) {
+    const result = await bookingsCollection.updateOne(
+      { id: bookingId },
+      { $set: updatedBooking }
+    );
+    if (result.matchedCount === 0) {
       return res.status(404).json({ error: 'Booking not found' });
     }
-
-    bookings[index] = { ...updatedBooking, id: bookingId };
-    await writeBookings(bookings);
     res.json({ message: 'Booking updated successfully' });
   } catch (err) {
     console.error('Error updating booking:', err);
@@ -111,15 +80,10 @@ app.put('/api/bookings/:id', async (req, res) => {
 app.delete('/api/bookings/:id', async (req, res) => {
   try {
     const bookingId = req.params.id;
-    const bookings = await readBookings();
-
-    const index = bookings.findIndex(booking => booking.id === bookingId);
-    if (index === -1) {
+    const result = await bookingsCollection.deleteOne({ id: bookingId });
+    if (result.deletedCount === 0) {
       return res.status(404).json({ error: 'Booking not found' });
     }
-
-    bookings.splice(index, 1);
-    await writeBookings(bookings);
     res.json({ message: 'Booking deleted successfully' });
   } catch (err) {
     console.error('Error deleting booking:', err);
@@ -131,47 +95,44 @@ app.delete('/api/bookings/:id', async (req, res) => {
 app.get('/api/bookings/filter', async (req, res) => {
   try {
     const { operator, startDate, endDate } = req.query;
-    let bookings = await readBookings();
- 
+    let query = {};
+
     if (operator) {
-      bookings = bookings.filter(booking => booking.systemOperator === operator);
+      query.systemOperator = operator;
     }
- 
+
     if (startDate && endDate) {
-      bookings = bookings.filter(booking => {
-        return booking.entries.some(entry => {
-          return entry.date >= startDate && entry.date <= endDate;
-        });
-      });
+      query['entries.date'] = { $gte: startDate, $lte: endDate };
     }
- 
+
+    const bookings = await bookingsCollection.find(query).toArray();
     res.json(bookings);
   } catch (err) {
     console.error('Error filtering bookings:', err);
     res.status(500).json({ error: 'Error filtering bookings' });
   }
 });
- 
+
 // API endpoint to get all operators
 app.get('/api/bookings/operators', async (req, res) => {
   try {
-    const operators = await readOperators();
-    res.json(operators);
+    const operators = await operatorsCollection.find({}).toArray();
+    res.json(operators.map(op => op.name));
   } catch (err) {
     console.error('Error reading operators:', err);
     res.status(500).json({ error: 'Error reading operators' });
   }
 });
- 
+
 // API endpoint to add a new operator
 app.post('/api/bookings/operators', async (req, res) => {
   try {
     const newOperator = req.body.operator;
-    const operators = await readOperators();
-    if (!operators.includes(newOperator)) {
-      operators.push(newOperator);
-      await writeOperators(operators);
-    }
+    const result = await operatorsCollection.updateOne(
+      { name: newOperator },
+      { $set: { name: newOperator } },
+      { upsert: true }
+    );
     res.status(201).json({ message: 'Operator added successfully' });
   } catch (err) {
     console.error('Error adding operator:', err);
@@ -182,11 +143,14 @@ app.post('/api/bookings/operators', async (req, res) => {
 // Serve static files (your HTML, CSS, JS files)
 app.use(express.static(__dirname));
 
-// Start the server
-// app.listen(port, () => {
-//   console.log(`Server running at http://localhost:${port}`);
-// });
 const server = app.listen(port, '0.0.0.0', () => {
   const host = server.address().address;
   console.log(`Server running at http://${host}:${port}`);
+});
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  await client.close();
+  console.log('MongoDB connection closed');
+  process.exit(0);
 });
